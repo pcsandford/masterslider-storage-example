@@ -1,0 +1,27 @@
+{
+  "name": "rise-tag",
+  "version": "0.1.0",
+  "authors": [
+    "Rise Vision"
+  ],
+  "description": "Rise Tag Component",
+  "main": "rise-tag.html",
+  "keywords": [
+    "polymer",
+    "web-components"
+  ],
+  "license": "GPLv3",
+  "homepage": "https://github.com/Rise-Vision/web-component-rise-tag",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "test"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#~2.2.3"
+  }
+}

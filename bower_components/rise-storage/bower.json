@@ -1,0 +1,30 @@
+{
+  "name": "rise-storage",
+  "version": "1.0.3",
+  "authors": [
+    "Donna Peplinskie <donna.peplinskie@risevision.com>"
+  ],
+  "description": "Rise Storage Web Component",
+  "main": "rise-storage.html",
+  "keywords": [
+    "polymer",
+    "web-components"
+  ],
+  "license": "GPLv3",
+  "homepage": "https://github.com/Rise-Vision/web-component-rise-storage",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "test"
+  ],
+  "dependencies": {
+    "core-ajax": "Polymer/core-ajax#~0.5.5",
+    "polymer": "Polymer/polymer#~0.5.5",
+    "rise-tag": "https://github.com/Rise-Vision/web-component-rise-tag.git",
+    "underscore": "~1.8.2"
+  },
+  "devDependencies": {
+    "web-component-tester": "~2.2.5"
+  }
+}

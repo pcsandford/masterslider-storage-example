@@ -1,0 +1,30 @@
+{
+  "name": "web-component-rise-tag",
+  "version": "0.1.0",
+  "description": "The Rise Tag Web Component is used for specifying lookup or freeform tags, their names, and their values. It is intended to be used by the rise-storage web component, which will return only those files from Rise Storage that have been labelled with the appropriate tags.",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rise-Vision/web-component-rise-tag.git"
+  },
+  "keywords": [
+    "polymer",
+    "web-components"
+  ],
+  "author": "Rise Vision",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/Rise-Vision/web-component-rise-tag/issues"
+  },
+  "homepage": "https://github.com/Rise-Vision/web-component-rise-tag",
+  "devDependencies": {
+    "gulp": "^3.8.10",
+    "gulp-bump": "^0.1.11",
+    "gulp-jshint": "^1.9.0",
+    "gulp-watch": "^1.2.0",
+    "jshint-stylish": "^1.0.0",
+    "run-sequence": "^1.0.1"
+  }
+}

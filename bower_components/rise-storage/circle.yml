@@ -1,0 +1,17 @@
+dependencies:
+  override:
+    - bower install
+    - npm install -g gulp
+    - npm install -g web-component-tester
+test:
+  override:
+    - wct
+deployment:
+  staging:
+    branch: /(feature|fix|chore).*/
+    commands:
+      - npm run build
+  production:
+    branch: master
+    commands:
+      - npm run build

@@ -1,0 +1,35 @@
+{
+  "name": "rise-tag",
+  "authors": [
+    "Rise Vision"
+  ],
+  "description": "Rise Tag Component",
+  "main": "rise-tag.html",
+  "keywords": [
+    "polymer",
+    "web-components"
+  ],
+  "license": "GPLv3",
+  "homepage": "https://github.com/Rise-Vision/web-component-rise-tag",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "test"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#~2.2.3"
+  },
+  "_release": "7fa318019c",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "7fa318019c44062e361435c0f988e15af416e916"
+  },
+  "_source": "https://github.com/Rise-Vision/web-component-rise-tag.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/Rise-Vision/web-component-rise-tag.git"
+}

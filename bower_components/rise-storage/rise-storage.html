@@ -1,0 +1,566 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+
+<script src="../underscore/underscore.js"></script>
+
+<polymer-element name="rise-storage" attributes="companyId folder fileName fileType contentType refresh sort sortDirection">
+  <template>
+    <content id="tags" select="rise-tag"></content>
+
+    <core-ajax id="storage"
+      url="{{url}}"
+      handleAs="json"
+      on-core-response="{{handleStorageResponse}}"
+      on-core-error="{{handleStorageError}}">
+    </core-ajax>
+
+    <core-ajax id="ping"
+      url="http://localhost:9494/ping?callback=handlePingResponse"
+      handleAs="text"
+      on-core-response="{{handlePingResponse}}"
+      on-core-error="{{handlePingError}}">
+    </core-ajax>
+
+    <core-ajax id="tagging"
+      url="https://storage-dot-rvaserver2.appspot.com/_ah/api/storage/v0.01/storageobjectbytag"
+      handleAs="json"
+      method="POST"
+      body="{{body}}"
+      contentType="application/json"
+      on-core-response="{{handleTaggingResponse}}"
+      on-core-error="{{handleTaggingError}}">
+    </core-ajax>
+  </template>
+
+  <script>
+    /* global Polymer, _ */
+    /*jshint newcap: false */
+    Polymer("rise-storage", {
+      /**
+       * Fired when a response is received.
+       *
+       * @event rise-storage-response
+       */
+
+      /**
+       * Fired when an error is received.
+       *
+       * @event rise-storage-error
+       */
+
+      /**
+       * The ID of the Company.
+       *
+       * @attribute companyId
+       * @type string
+       * @default ""
+       */
+      companyId: "",
+
+      /**
+       * The folder name.
+       *
+       * @attribute folder
+       * @type string
+       * @default ""
+       */
+      folder: "",
+
+      /**
+       * The file name.
+       *
+       * @attribute fileName
+       * @type string
+       * @default ""
+       */
+      fileName: "",
+
+      /**
+       * Only return files that are of a particular file type.
+       *
+       * @attribute fileType
+       * @type string
+       * @default ""
+       */
+      fileType: "",
+
+      /**
+       * Only return files with a particular content type.
+       *
+       * @attribute contentType
+       * @type string
+       * @default ""
+       */
+      contentType: "",
+
+      /**
+       * The number of seconds before another request will be made.
+       *
+       * @attribute refresh
+       * @type number
+       * @default 0 (no refresh)
+       */
+      refresh: 0,
+
+      /**
+       * The order in which files are sorted.
+       *
+       * @attribute sort
+       * @type string
+       * @default ""
+       */
+      sort: "",
+
+      /**
+       * The direction in which files are sorted.
+       *
+       * @attribute sortDirection
+       * @type string
+       * @default ""
+       */
+      sortDirection: "",
+
+      /**
+       * The URL target of the request.
+       *
+       * @property url
+       * @type string
+       * @default ""
+       */
+      url: "",
+
+      /**
+       * The base URL for Rise Cache.
+       *
+       * @property riseCacheUrl
+       * @type string
+       * @default "http://localhost:9494/?url="
+       */
+      riseCacheUrl: "http://localhost:9494/?url=",
+
+      /**
+       * Whether or not Rise Cache is running.
+       *
+       * @property isCacheRunning
+       * @type boolean
+       * @default false
+       */
+      isCacheRunning: false,
+
+      /**
+       * Whether or not a response has been received from the ping request.
+       *
+       * @property pingReceived
+       * @type boolean
+       * @default false
+       */
+      pingReceived: false,
+
+      /**
+       * Body content for the tagging request.
+       *
+       * @property body
+       * @type string
+       * @default ""
+       */
+      body: "",
+
+      /************************************** INITIALIZATION **************************************/
+
+      /**
+       * Polymer has finished its initialization. This is the entry point.
+       */
+      ready: function() {
+        this.images = ["image/jpeg", "image/png", "image/bmp", "image/svg+xml", "image/gif"];
+        this.videos = ["video/mp4", "video/ogg", "video/webm"];
+        this.imagesLen = this.images.length;
+        this.videosLen = this.videos.length;
+        this.contentTypes = this.contentType.split(" ");
+        this.contentTypesLen = this.contentTypes.length;
+      },
+
+      /**
+       * An instance of the element was inserted into the DOM.
+       */
+      attached: function() {
+        this.$.ping.go();
+      },
+
+      /****************************************** COMMON ******************************************/
+
+      /**
+       * Performs an Ajax request to the specified URL.
+       */
+      go: function() {
+        var nodes = this.$.tags.getDistributedNodes();
+
+        if (this.pingReceived) {
+          if (nodes.length > 0) {
+            this.prepareTaggingRequest(nodes);
+          }
+          else {
+            this.setStorageUrl();
+            this.$.storage.go();
+          }
+        }
+      },
+
+      /**
+       * Perform any necessary filtering.
+       */
+      filterFiles: function(contentType) {
+        if (this.fileType) {
+          return this.filterByFileType(contentType);
+        }
+        else if (this.contentType) {
+          return this.filterByContentType(contentType);
+        }
+
+        return true;
+      },
+
+      /**
+       * Filters an item by content type.
+       */
+      filterByContentType: function(contentType) {
+        for (var i = 0; i < this.contentTypesLen; i++) {
+          if (contentType === this.contentTypes[i]) {
+            return true;
+          }
+        }
+
+        return false;
+      },
+
+      /**
+       * Filters an item by file type.
+       */
+      filterByFileType: function(contentType) {
+        var i;
+
+        if (this.fileType === "image") {
+          for (i = 0; i < this.imagesLen; i++) {
+            if (contentType === this.images[i]) {
+              return true;
+            }
+          }
+        }
+        else if (this.fileType === "video") {
+          for (i = 0; i < this.videosLen; i++) {
+            if (contentType === this.videos[i]) {
+              return true;
+            }
+          }
+        }
+
+        return false;
+      },
+
+      /**
+       * Sorts all files.
+       */
+      sortFiles: function(files) {
+        if (this.sort === "name" || this.sort === "date") {
+          files = _.sortBy(files, function(file) {
+            return file.sortBy;
+          });
+        }
+        else if (this.sort === "random") {
+          return _.shuffle(files);
+        }
+
+        // Direction
+        if (this.sortDirection) {
+          if (this.sortDirection === "asc") {
+            return files;
+          }
+          else if (this.sortDirection === "desc") {
+            return files.reverse();
+          }
+        }
+
+        return files;
+      },
+
+      /**
+       * Prepares the response object.
+       */
+      prepareResponse: function(files) {
+        var self = this,
+          response = {};
+
+        response.files = [];
+
+        if (this.sort && files.length > 0) {
+          files = this.sortFiles(files);
+        }
+
+        files.forEach(function(file) {
+          if (self.sort) {
+            delete file.sortBy;
+          }
+
+          response.files.push(file);
+        });
+
+        return response;
+      },
+
+      /**
+       * Handles a refresh.
+       */
+      startTimer: function() {
+        this.refresh = parseInt(this.refresh, 10);
+
+        if (!isNaN(this.refresh) && this.refresh !== 0) {
+          this.refresh = (this.refresh < 15) ? 15 : this.refresh;
+
+          this.job("refresh", function() {
+            this.pingReceived = false;
+            this.$.ping.go();
+          }, this.refresh * 60000);
+        }
+      },
+
+      /***************************************** TAGGING *****************************************/
+
+      /**
+       * Sets the raw body content to send along with the tagging request.
+       */
+      prepareTaggingRequest: function(nodes) {
+        var body = {},
+          tags = [],
+          tag, type, name, value;
+
+        if (this.companyId) {
+          body.companyId = this.companyId;
+
+          // Process each <rise-tag>.
+          for (var i = 0; i < nodes.length; i++) {
+            type = nodes[i].getAttribute("type");
+            name = nodes[i].getAttribute("name");
+            value = nodes[i].getAttribute("value");
+
+            // type and name attributes are both required.
+            if (type && name) {
+              tag = {};
+              tag.type = type;
+              tag.name = name;
+
+              if (value) {
+                tag.value = value;
+              }
+
+              tags.push(tag);
+              body.tags = tags;
+            }
+            else {
+              console.error("No type or name attribute specified on <rise-tag> element.");
+            }
+          }
+
+          if (body.tags && this.pingReceived) {
+            this.body = JSON.stringify(body);
+            this.$.tagging.go();
+          }
+        }
+        else {
+          console.error("No companyId provided.");
+        }
+      },
+
+      /**
+       * Fires when a response is received from the tagging request.
+       */
+      handleTaggingResponse: function(e, resp) {
+        var self = this,
+          data = null,
+          files = [],
+          response = {};
+
+        if (resp && resp.response && resp.response.files) {
+          resp.response.files.forEach(function(file) {
+            data = {};
+
+            if (!self.filterFiles(file.contentType)) {
+              return;
+            }
+
+            // Sorting
+            if (self.sort) {
+              if (self.sort === "name") {
+                data.sortBy = file.objectId;
+              }
+              else if (self.sort === "date") {
+                data.sortBy = new Date(file.changedDate).getTime();
+              }
+            }
+
+            if (file.url) {
+              data.url = self.isCacheRunning ? self.riseCacheUrl + escape(file.url) : file.url;
+            }
+
+            if (file.tags) {
+              data.tags = file.tags;
+            }
+
+            if (file.timeline) {
+              data.timeline = JSON.parse(file.timeline);
+            }
+
+            files.push(data);
+          });
+
+          response = this.prepareResponse(files);
+        }
+
+        this.startTimer();
+        this.fire("rise-storage-response", response);
+      },
+
+      /**
+       * Fires when an error is received from the tagging request.
+       */
+      handleTaggingError: function(e, resp) {
+        console.error("Tagging Error: " + resp.xhr.status + " " + resp.xhr.statusText);
+
+        this.startTimer();
+        this.fire("rise-storage-error", resp);
+      },
+
+      /****************************************** FILES *******************************************/
+
+      /**
+       * Sets the URL that is used for making requests to Storage.
+       */
+      setStorageUrl: function() {
+        var baseUrl = "https://www.googleapis.com/storage/v1/b/risemedialibrary-" + encodeURIComponent(this.companyId) + "/o",
+          delimiter = "?delimiter=" + encodeURIComponent("/"),
+          folder = "&prefix=" + encodeURIComponent(this.folder),
+          fileName = encodeURIComponent(this.fileName),
+          url = baseUrl;
+
+        if (this.companyId) {
+          if (this.folder) {
+            // Append a "/" at end of folder if necessary.
+            if (this.folder.slice(-1) !== "/") {
+              folder += "/";
+            }
+
+            // Get a specific file in a specific folder.
+            if (this.fileName) {
+              url += delimiter + folder + fileName;
+            }
+            // Get all files in a specific folder.
+            else {
+              url += delimiter + folder;
+            }
+          }
+          // Get a specific file in a bucket.
+          else if (this.fileName) {
+            url += "/" + fileName;
+          }
+          // Get all files in a bucket.
+          else {
+            url += delimiter;
+          }
+
+          this.url = url;
+        }
+        else {
+          console.error("No companyId provided.");
+        }
+      },
+
+      /**
+       * Fires when a response is received from the Google Storage request.
+       */
+      handleStorageResponse: function(e, resp) {
+        var self = this,
+          file = {},
+          files = [],
+          response = null;
+
+        if (resp && resp.response && resp.response.items) {
+          resp.response.items.forEach(function(item) {
+            file = {};
+
+            // Check that this is not a folder.
+            if (item.name && (item.name.slice(-1) !== "/")) {
+              if (item.mediaLink) {
+                if (!self.filterFiles(item.contentType)) {
+                  return;
+                }
+
+                // Sorting
+                if (self.sort) {
+                  if (self.sort === "name") {
+                    file.sortBy = item.name;
+                  }
+                  else if (self.sort === "date") {
+                    file.sortBy = new Date(item.updated).getTime();
+                  }
+                }
+
+                if (item.mediaLink) {
+                  file.url = self.isCacheRunning ? self.riseCacheUrl + escape(item.mediaLink) : item.mediaLink;
+                }
+
+                files.push(file);
+              }
+            }
+          });
+        }
+        // A single file stored in the root of a bucket has a different response format.
+        else if (resp && resp.response && resp.response.mediaLink) {
+          file.url = self.isCacheRunning ? self.riseCacheUrl + escape(resp.response.mediaLink) : resp.response.mediaLink;
+
+          files.push(file);
+        }
+
+        response = this.prepareResponse(files);
+
+        this.startTimer();
+        this.fire("rise-storage-response", response);
+      },
+
+      /**
+       * Fires when an error is received from the Google Storage request.
+       */
+      handleStorageError: function(e, resp) {
+        console.error("Storage Error: " + resp.xhr.status + " " + resp.xhr.statusText);
+
+        this.startTimer();
+        this.fire("rise-storage-error", resp);
+      },
+
+      /**************************************** RISE CACHE ****************************************/
+
+      /**
+       * Fires when a response is received from the Rise Cache request.
+       */
+      handlePingResponse: function(e, resp) {
+        if (resp.response === "") {
+          this.isCacheRunning = false;
+        }
+        else {
+          this.isCacheRunning = true;
+        }
+
+        this.pingReceived = true;
+        this.go();
+      },
+
+      /**
+       * Fires when an error is received from the Rise Cache request.
+       */
+      handlePingError: function(e, resp) {
+        console.error("Ping Error: " + resp.xhr.status + " " + resp.xhr.statusText);
+
+        this.isCacheRunning = false;
+        this.pingReceived = true;
+        this.go();
+      }
+    });
+  </script>
+</polymer-element>

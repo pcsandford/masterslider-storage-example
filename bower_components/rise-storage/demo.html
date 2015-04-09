@@ -9,22 +9,39 @@
 
 </head>
 <body unresolved>
-  <rise-storage id="sorting" companyId="b428b4e8-c8b9-41d5-8a10-b4193c789443" folder="images"
-    sort="name" sortDirection="desc"></rise-storage>
+  <rise-storage companyId="30007b45-3df0-4c7b-9f7f-7d8ce6443013" folder="slider-images">
+    <rise-tag type="lookup" name="images"></rise-tag>
+
+    <!-- <rise-tag type="freeform" name="headline subheadline text"></rise-tag> -->
+   <!--  <rise-tag type="lookup" name="city" value="skyline"></rise-tag>
+    <rise-tag type="lookup" name="mountain" value="misty"></rise-tag>
+    <rise-tag type="lookup" name="nightsky" value="stars"></rise-tag> -->
+    </rise-storage>
+    
   <img id="image1" src="" />
+ <!--  <h1>
+  <rise-storage id="sorting" companyId="30007b45-3df0-4c7b-9f7f-7d8ce6443013">
+  <rise-tag type="freeform" name="headline"></rise-tag>
+  </rise-storage>
+  </h1> -->
+
   <img id="image2" src="" />
   <img id="image3" src="" />
+   <img id="image4" src="" />
 
   <script>
     var storage = document.querySelector("rise-storage"),
       image1 = document.querySelector("#image1"),
       image2 = document.querySelector("#image2"),
       image3 = document.querySelector("#image3");
+      image4 = document.querySelector("#image4");
 
     storage.addEventListener("rise-storage-response", function(e) {
+      console.log(e.detail);
       image1.setAttribute("src", e.detail.files[0].url);
       image2.setAttribute("src", e.detail.files[1].url);
       image3.setAttribute("src", e.detail.files[2].url);
+      image4.setAttribute("src", e.detail.files[3].url);
     });
   </script>
 

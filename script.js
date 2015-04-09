@@ -21,22 +21,22 @@
         // Respond to events it fires.
         storage.addEventListener('rise-storage-response', function(e) {
           if (e.detail && e.detail.files && e.detail.files.length > 0) {
-            image1.setAttribute("src", e.detail.files[0].url);
-            image2.setAttribute("src", e.detail.files[1].url);
-            image3.setAttribute("src", e.detail.files[2].url);
-            image4.setAttribute("src", e.detail.files[3].url);
-            header1.innerHTML= e.detail.files[0].tags[0].value;
-            subheader1.innerHTML= e.detail.files[0].tags[2].value;
-            text1.innerHTML= e.detail.files[0].tags[1].value;
-            header2.innerHTML= e.detail.files[1].tags[2].value;
-            subheader2.innerHTML= e.detail.files[1].tags[1].value;
-            text2.innerHTML= e.detail.files[1].tags[0].value;
-            header3.innerHTML= e.detail.files[2].tags[2].value;
-            subheader3.innerHTML= e.detail.files[2].tags[1].value;
-            text3.innerHTML= e.detail.files[2].tags[0].value;
-            header4.innerHTML= e.detail.files[3].tags[1].value;
-            subheader4.innerHTML= e.detail.files[3].tags[0].value;
-            text4.innerHTML= e.detail.files[3].tags[2].value;
+            image1.setAttribute("src", e.detail.files[14].url);
+            image2.setAttribute("src", e.detail.files[15].url);
+            image3.setAttribute("src", e.detail.files[16].url);
+            image4.setAttribute("src", e.detail.files[17].url);
+            header1.innerHTML= e.detail.files[14].tags[2].value;
+            subheader1.innerHTML= e.detail.files[14].tags[3].value;
+            text1.innerHTML= e.detail.files[14].tags[4].value;
+            header2.innerHTML= e.detail.files[15].tags[2].value;
+            subheader2.innerHTML= e.detail.files[15].tags[1].value;
+            text2.innerHTML= e.detail.files[15].tags[0].value;
+            header3.innerHTML= e.detail.files[16].tags[2].value;
+            subheader3.innerHTML= e.detail.files[16].tags[1].value;
+            text3.innerHTML= e.detail.files[16].tags[0].value;
+            header4.innerHTML= e.detail.files[17].tags[1].value;
+            subheader4.innerHTML= e.detail.files[17].tags[0].value;
+            text4.innerHTML= e.detail.files[17].tags[2].value;
             
              // URL to the file.
           }

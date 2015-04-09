@@ -56,7 +56,7 @@ body {
 .slide-1 .box{
 	left: 5vw;
 	top: 70% !important;
-	width: 90vw;
+	width: 100vw;
 	padding-bottom: 18vh !important;
 	background: rgba(0, 0, 0, 0.72);
 }
@@ -65,7 +65,7 @@ body {
 	margin: 0;
 	top: 86vh !important;
 	font-weight: 300;
-	left: 82px;
+	right: 82px;
 	padding: 0;
 }
 
@@ -81,7 +81,7 @@ body {
 .slide-1 .big-text{
 	font-weight: 600;
 	left: 77px;
-	top: 76vh !important;
+	top: 74vh !important;
 	padding: 0;
 	font-size: 58px;
 	margin: 0;
@@ -96,7 +96,7 @@ body {
 .slide-2 .box{
 	left: 5vw;
 	top: 70% !important;
-	width: 90vw;
+	width: 100vw;
 	padding-bottom: 18vh !important;
 	background: rgba(0, 0, 0, 0.72);
 }
@@ -105,7 +105,7 @@ body {
 	margin: 0;
 	top: 86vh !important;
 	font-weight: 300;
-	left: 82px;
+	right: 82px;
 	padding: 0;
 }
 
@@ -135,7 +135,7 @@ body {
 .slide-3 .box{
 	left: 5vw;
 	top: 70% !important;
-	width: 90vw;
+	width: 100vw;
 	padding-bottom: 18vh !important;
 	background: rgba(0, 0, 0, 0.72);
 }
@@ -144,7 +144,7 @@ body {
 	margin: 0;
 	top: 86vh !important;
 	font-weight: 300;
-	left: 82px;
+	right: 82px;
 	padding: 0;
 }
 
@@ -174,7 +174,7 @@ body {
 .slide-4 .box{
 	left: 5vw;
 	top: 70% !important;
-	width: 90vw;
+	width: 100vw;
 	padding-bottom: 18vh !important;
 	background: rgba(0, 0, 0, 0.72);
 }
@@ -183,7 +183,7 @@ body {
 	margin: 0;
 	top: 86vh !important;
 	font-weight: 300;
-	left: 82px;
+	right: 82px;
 	padding: 0;
 }
 
@@ -205,14 +205,3 @@ body {
 	margin: 0;
 }
 
-.slide-5 .video-caption {
-	color: #FFF;
-	border: solid 4px #FFF;
-	padding: 12px 10px;
-	width: 71%;
-	left: 106px;
-	font-weight: 600;
-	text-align: center;
-	font-size: 52px;
-	top: 44% !important;
-}
